@@ -1,4 +1,4 @@
-import io
+import io, math
 import numpy as np
 from gensim.models import KeyedVectors
 
@@ -31,6 +31,60 @@ def Glove():
             word = tokens[0]
             data[word] = np.array(list(map(float, tokens[1:])))
     return data
+
+# function to transfer vanilla bag of words model to vectors
+def BOW_to_vecs(neg_data, pos_data):
+    neg_dict = dict()
+    pos_dict = dict()
+    for i in neg_data:
+        for word in neg_data[i]:
+            try:
+                neg_dict[i][word] += 1
+            except:
+                neg_dict[i] = {word:1}
+    for i in pos_data:
+        for word in pos_data[i]:
+            try:
+                pos_dict[i][word] += 1
+            except:
+                pos_dict[i] = {word: 1}
+
+    # now transfer from word to vectors
+    x = []
+    for i in neg_dict:
+        count = 0
+        doc_vec = np.zeros(300)
+        for word in neg_dict[i]:
+            idf = get_idf(neg_dict, pos_dict, word)
+            doc_vec += idf * neg_dict[i][word]
+            count += neg_dict[i][word]
+        if(count != 0):
+            doc_vec /= count
+        x.append(doc_vec)
+    
+    for i in pos_dict:
+        count = 0
+        doc_vec = np.zeros(300)
+        for word in pos_dict[i]:
+            idf = get_idf(neg_dict, pos_dict, word)
+            doc_vec += idf * pos_dict[i][word]
+            count += pos_dict[i][word]
+        if(count != 0):
+            doc_vec /= count
+        x.append(doc_vec)
+
+    return np.array(x)
+
+# function to calculate the idf of word
+def get_idf(neg_data, pos_data, word):
+    num = 0
+    for i in neg_data:
+        if word in neg_data[i]:
+            num += 1
+    for j in pos_data:
+        if word in pos_data[j]:
+            num += 1
+    return math.log((len(neg_data) + len(pos_data))/num)
 
 
 # function to apply model vectors to the dataset

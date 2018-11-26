@@ -35,18 +35,19 @@ def main():
         data = json.load(f)
     
     # NOTE: this three models all have word vector with dimension 300
-    word2vec = Word2vec()
+    # word2vec = Word2vec()
     # fasttext = fastText()
-    # glove = Glove()
+    glove = Glove()
 
-    X = generate_vecs(word2vec, data)
+    # X = generate_vecs(word2vec, data)
+    # X = generate_vecs(fasttext, data)
+    X = generate_vecs(glove, data)
     y = generate_targets(data)
     stratified_split = StratifiedShuffleSplit(n_splits=2, test_size=0.33)
     for train_index, test_index in stratified_split.split(X, y):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
-    # print(X_train)
     param_grid = {'C': [0.1, 1, 10, 100], 'gamma': [
         1, 0.1, 0.01, 0.001, 0.00001, 10]}
     clf_grid = GridSearchCV(SVC(kernel="linear"), param_grid, verbose=1)
@@ -61,7 +62,17 @@ def main():
 if __name__ == "__main__":
     main()
 
-# result: (run about 79.8 min)
-# 0.9554040285288817
-# 0.9660802028847678
-# 0.9449612403100776
+# word2vec: result(run about 109.7 min)
+# 0.9555176689398637
+# 0.9552215680198327
+# 0.9558139534883721
+
+# fasttext: result(run about 102.2 min)
+# 0.9541169076052798
+# 0.9671870022300095
+# 0.9413953488372093
+
+# glove: result(run about 687 min)
+# 0.6684415318451771
+# 0.9843184559710495
+# 0.5060465116279069
