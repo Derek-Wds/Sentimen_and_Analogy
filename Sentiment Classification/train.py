@@ -5,7 +5,7 @@ import numpy as np
 from file_parser import read_dataset1_files, read_dataset2_files
 from util import *
 from word_vec import *
-from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedShuffleSplit, learning_curve, ShuffleSplit
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedShuffleSplit, learning_curve, ShuffleSplit, StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
@@ -32,8 +32,8 @@ def main():
     # X = generate_vecs(fasttext, neg_words, pos_words)
     X = generate_vecs(glove, neg_words, pos_words)
     y = generate_targets(neg_words, pos_words)
-    stratified_split = StratifiedShuffleSplit(n_splits=2, test_size=0.33)
-    for train_index, test_index in stratified_split.split(X, y):
+    skf = StratifiedKFold(n_splits=2, random_state=None, shuffle=False)
+    for train_index, test_index in skf.split(X, y):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
@@ -57,8 +57,7 @@ def main():
     print(recall_score(y_test, y_pred))
 
 
-
-    title = "Learning Curves for {} (SVM, linear kernel, $\gamma=1$, C=1)".format("Glove")
+    title = "Learning Curves for {} (SVM, linear kernel, $\gamma=1$, C=1)".format("BOW")
     # SVC is more expensive so we do a lower number of CV iterations:
     cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
     estimator = SVC(kernel="linear",gamma=1, C=1)
@@ -99,23 +98,24 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
 
 if __name__ == "__main__":
     main()
+# total words: 46180/664680
 
 # result: baseline of bag of words
-# 0.29017857142857145
-# 0.5508474576271186
-# 0.19696969696969696
+# 0.2952243125904486
+# 0.5340314136125655
+# 0.204
 
-# word2vec
-# 0.832049306625578
-# 0.8463949843260188
-# 0.8181818181818182
+# word2vec 20816/84751 oov
+# 0.8217522658610271
+# 0.8275862068965517
+# 0.816
 
-# fasttext
-# 0.8598130841121494
-# 0.8846153846153846
-# 0.8363636363636363
+# fasttext 10167/27696 oov
+# 0.821501014198783
+# 0.8333333333333334
+# 0.81
 
-# glove
-# 0.8472012102874432
-# 0.8459214501510574
-# 0.8484848484848485
+# glove 8779/14907 oov
+# 0.8159509202453987
+# 0.8347280334728033
+# 0.798

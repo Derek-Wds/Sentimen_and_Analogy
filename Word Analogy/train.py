@@ -1,7 +1,7 @@
 import json
 import numpy as np
 from word_vec import *
-from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedShuffleSplit
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
@@ -43,8 +43,8 @@ def main():
     # X = generate_vecs(fasttext, data)
     X = generate_vecs(glove, data)
     y = generate_targets(data)
-    stratified_split = StratifiedShuffleSplit(n_splits=2, test_size=0.33)
-    for train_index, test_index in stratified_split.split(X, y):
+    skf = StratifiedKFold(n_splits=2, random_state=None, shuffle=False)
+    for train_index, test_index in skf.split(X, y):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
@@ -62,17 +62,17 @@ def main():
 if __name__ == "__main__":
     main()
 
-# word2vec: result(run about 109.7 min)
-# 0.9555176689398637
-# 0.9552215680198327
-# 0.9558139534883721
+# word2vec: result
+# 0.39749387087986926
+# 0.4250262146102761
+# 0.3733115022513303
 
-# fasttext: result(run about 102.2 min)
-# 0.9541169076052798
-# 0.9671870022300095
-# 0.9413953488372093
+# fasttext: result
+# 0.56508346581876
+# 0.5491502510621862
+# 0.5819688907081457
 
-# glove: result(run about 687 min)
-# 0.6684415318451771
-# 0.9843184559710495
-# 0.5060465116279069
+# glove: result
+# 0.4758049212473907
+# 0.6229915520954117
+# 0.38487515349979534
