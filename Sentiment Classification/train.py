@@ -5,11 +5,11 @@ import numpy as np
 from file_parser import read_dataset1_files, read_dataset2_files
 from util import *
 from word_vec import *
-from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedShuffleSplit
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedShuffleSplit, learning_curve, ShuffleSplit
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
-
+import matplotlib.pyplot as plt
 
 # read all the files and polish those files' contents
 
@@ -58,13 +58,52 @@ def main():
 
 
 
+    title = "Learning Curves for {} (SVM, linear kernel, $\gamma=1$, C=1)".format("Glove")
+    # SVC is more expensive so we do a lower number of CV iterations:
+    cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
+    estimator = SVC(kernel="linear",gamma=1, C=1)
+    plot_learning_curve(estimator, title, X, y, cv=cv, n_jobs=4)
+
+    plt.show()
+
+
+def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
+                        n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5)):
+    plt.figure()
+    plt.title(title)
+    if ylim is not None:
+        plt.ylim(*ylim)
+    plt.xlabel("Training examples")
+    plt.ylabel("Score")
+    train_sizes, train_scores, test_scores = learning_curve(
+        estimator, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes)
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+    plt.grid()
+
+    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
+                     train_scores_mean + train_scores_std, alpha=0.1,
+                     color="r")
+    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
+                     test_scores_mean + test_scores_std, alpha=0.1, color="g")
+    plt.plot(train_sizes, train_scores_mean, 'o-', color="r",
+             label="Training score")
+    plt.plot(train_sizes, test_scores_mean, 'o-', color="g",
+             label="Cross-validation score")
+
+    plt.legend(loc="best")
+    return plt
+
+
 if __name__ == "__main__":
     main()
 
 # result: baseline of bag of words
-# 0.3017241379310345
-# 0.5223880597014925
-# 0.21212121212121213
+# 0.29017857142857145
+# 0.5508474576271186
+# 0.19696969696969696
 
 # word2vec
 # 0.832049306625578
@@ -72,11 +111,11 @@ if __name__ == "__main__":
 # 0.8181818181818182
 
 # fasttext
-# 0.8072837632776934
-# 0.8085106382978723
-# 0.806060606060606
+# 0.8598130841121494
+# 0.8846153846153846
+# 0.8363636363636363
 
 # glove
-# 0.8104776579352851
-# 0.8244514106583072
-# 0.796969696969697
+# 0.8472012102874432
+# 0.8459214501510574
+# 0.8484848484848485
