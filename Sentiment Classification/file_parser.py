@@ -1,9 +1,16 @@
 import json
 from os import listdir
 from os.path import isfile, join
+from string import punctuation
+from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
 from util import split_sentence
+from stop_list import *
 
+ps = SnowballStemmer("english")
+
+closed_class_stop_words.extend(stopwords.words('english'))
+stop_words = set(closed_class_stop_words)
 
 # function to get all dataset1 files' paths and store them in a dictionary of list
 def get_file_path():
@@ -45,7 +52,16 @@ def read_dataset1_files():
         with open(fp, "r") as f:
             lines = f.readlines()
             for line in lines:
-                words.extend(split_sentence(line))
+                sentence_list = split_sentence(line)
+                final_sentence = list()
+                for i in range(len(sentence_list)):
+                    token = sentence_list[i]
+                    token = token.strip(punctuation)
+                    if "'" in token:
+                        token = ps.stem(token)
+                    if token in stop_words or token in punctuation:
+                        final_sentence.append(token)
+                words.extend(final_sentence)
         neg_result[idx] = words
         idx += 1
     
@@ -59,7 +75,16 @@ def read_dataset1_files():
         with open(fp, "r") as f:
             lines = f.readlines()
             for line in lines:
-                words.extend(split_sentence(line))
+                sentence_list = split_sentence(line)
+                final_sentence = list()
+                for i in range(len(sentence_list)):
+                    token = sentence_list[i]
+                    token = token.strip(punctuation)
+                    if "'" in token:
+                        token = ps.stem(token)
+                    if token in stop_words or token in punctuation:
+                        final_sentence.append(token)
+                words.extend(final_sentence)
         pos_result[idx] = words
         idx += 1
 
@@ -78,8 +103,16 @@ def read_dataset2_files():
         lines = f.readlines()
         idx = 0
         for line in lines:
-            words = split_sentence(line)
-            neg_result[idx] = words
+            sentence_list = split_sentence(line)
+            final_sentence = list()
+            for i in range(len(sentence_list)):
+                token = sentence_list[i]
+                token = token.strip(punctuation)
+                if "'" in token:
+                    token = ps.stem(token)
+                if token in stop_words or token in punctuation:
+                    final_sentence.append(token)
+            neg_result[idx] = final_sentence
             idx += 1
     
     with open("temp_data/dataset2_neg_words.json", "w") as f:
@@ -90,8 +123,16 @@ def read_dataset2_files():
         lines = f.readlines()
         idx = 0
         for line in lines:
-            words = split_sentence(line)
-            pos_result[idx] = words
+            sentence_list = split_sentence(line)
+            final_sentence = list()
+            for i in range(len(sentence_list)):
+                token = sentence_list[i]
+                token = token.strip(punctuation)
+                if "'" in token:
+                    token = ps.stem(token)
+                if token in stop_words or token in punctuation:
+                    final_sentence.append(token)
+            pos_result[idx] = final_sentence
             idx += 1
 
     with open("temp_data/dataset2_pos_words.json", "w") as f:

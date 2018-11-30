@@ -91,6 +91,7 @@ def get_idf(neg_data, pos_data, word):
 def generate_vecs(model, neg_data, pos_data):
     dimension = len(model["hello"])
     x = []
+    oov = 0
     # negative
     for idx in neg_data:
         count = 0
@@ -101,7 +102,8 @@ def generate_vecs(model, neg_data, pos_data):
                 doc_vec += model[word]
                 count += 1
             except:
-                continue
+                oov += 1
+                print("Find oov {}".format(word))
         if count != 0:
             doc_vec /= count
         x.append(doc_vec)
@@ -116,10 +118,12 @@ def generate_vecs(model, neg_data, pos_data):
                 doc_vec += model[word]
                 count += 1
             except:
-                continue
+                oov += 1
+                print("Find oov {}".format(word))
         if count != 0:
             doc_vec /= count
         x.append(doc_vec)
+    print("total oov %i" % oov)
     return np.array(x)
 
 

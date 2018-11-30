@@ -2,7 +2,7 @@
 closed_class_stop_words = ['a','the','an','and','or','but','about','above','after','along','amid','among',\
                            'as','at','by','for','from','in','into','like','minus','near','of','off','on',\
                            'onto','out','over','past','per','plus','since','till','to','under','until','up',\
-                           'via','vs','with','that','can','cannot','could','may','might','must',\
+                           'via','vs','with','that','can','cannot', "can't",'could','may','might','must',\
                            'need','ought','shall','should','will','would','have','had','has','having','be',\
                            'is','am','are','was','were','being','been','get','gets','got','gotten',\
                            'getting','seem','seeming','seems','seemed',\
@@ -19,6 +19,7 @@ closed_class_stop_words = ['a','the','an','and','or','but','about','above','afte
                            'everyone', 'everyplace', 'everything' 'everywhere', 'whatever',\
                            'whenever', 'whereever', 'whichever', 'whoever', 'whomever' 'he',\
                            'him', 'his', 'her', 'she', 'it', 'they', 'them', 'its', 'their','theirs',\
-                           'you','your','yours','me','my','mine','I','we','us','much','and/or'
+                           'you','your','yours','me','my','mine','I','we','us','much','and/or', "I've", "I'd", "I'll",\
+                           "we're", "we've", "they're", "they'd"
                            ]
 
