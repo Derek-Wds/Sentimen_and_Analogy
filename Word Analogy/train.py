@@ -2,7 +2,8 @@ import json
 import numpy as np
 from word_vec import *
 from utils import *
-from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
@@ -39,12 +40,9 @@ def main():
             X_train, X_test = X_i[train_index], X_i[test_index]
             y_train, y_test = y_i[train_index], y_i[test_index]
 
-        param_grid = {'C': [0.1, 1, 10, 100], 'gamma': [
-            1, 0.1, 0.01, 0.001, 0.00001, 10]}
-        clf_grid = GridSearchCV(SVC(kernel="linear"), param_grid, verbose=1)
-        clf_grid.fit(X_train, y_train)
-        best_clf = clf_grid.best_estimator_
-        y_pred = best_clf.predict(X_test)
+        mlp = MLPClassifier(hidden_layer_sizes=(10, 20, 10), max_iter=1000)
+        mlp.fit(X_train, y_train)
+        y_pred = mlp.predict(X_test)
         print(category)
         print(f1_score(y_test, y_pred))
         print(precision_score(y_test, y_pred))
