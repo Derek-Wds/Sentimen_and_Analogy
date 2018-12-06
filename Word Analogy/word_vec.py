@@ -1,4 +1,4 @@
-import io
+import io, collections
 import numpy as np
 from gensim.models import KeyedVectors
 
@@ -36,46 +36,67 @@ def Glove():
 # function to get X data
 def generate_vecs(model, data):
     x = []
+    result = {}
     dimension = len(model["hello"])
-    length = len(data)
-    for i in range(1, length + 1):
-        i = str(i)
+    for i in data:
         for idx in data[i]:
             sum1 = np.zeros(dimension)
             sum2 = np.zeros(dimension)
             try:
                 data1 = model[data[i][idx][0]]
             except:
-                data1 = 0
+               continue
             
             try:
                 data2 = model[data[i][idx][2]]
             except:
-                data2 = 0
+                continue
             
             try:
                 data3 = model[data[i][idx][1]]
             except:
-                data3 = 0
+                continue
             
             try:
                 data4 = model[data[i][idx][3]]
             except:
-                data4 = 0
+                continue
             sum1 += (data1 + data2)/2
             sum2 += (data3 + data4)/2
             x.append(sum1)
             x.append(sum2)
-    return np.array(x)
+        result[i] = np.array(x)
+    od = collections.OrderedDict(sorted(result.items()))
+    return od
 
 
 # function to get y target
-def generate_targets(data):
+def generate_targets(model, data):
     x = []
-    length = len(data)
-    for i in range(1, length + 1):
-        i = str(i)
+    result = {}
+    for i in data:
         for j in data[i]:
+            try:
+                data1 = model[data[i][j][0]]
+            except:
+               continue
+
+            try:
+                data2 = model[data[i][j][1]]
+            except:
+                continue
+
+            try:
+                data3 = model[data[i][j][2]]
+            except:
+                continue
+
+            try:
+                data4 = model[data[i][j][3]]
+            except:
+                continue
             x.append(0)
             x.append(1)
-    return np.array(x)
+        result[i] = np.array(x)
+    od = collections.OrderedDict(sorted(result.items()))
+    return od
