@@ -60,6 +60,8 @@ def read_dataset1_files():
                     if "'" in token:
                         token = ps.stem(token)
                     if token in stop_words or token in punctuation:
+                        pass
+                    else:
                         final_sentence.append(token)
                 words.extend(final_sentence)
         neg_result[idx] = words
@@ -83,6 +85,8 @@ def read_dataset1_files():
                     if "'" in token:
                         token = ps.stem(token)
                     if token in stop_words or token in punctuation:
+                        pass
+                    else:
                         final_sentence.append(token)
                 words.extend(final_sentence)
         pos_result[idx] = words
@@ -111,6 +115,8 @@ def read_dataset2_files():
                 if "'" in token:
                     token = ps.stem(token)
                 if token in stop_words or token in punctuation:
+                    pass
+                else:
                     final_sentence.append(token)
             neg_result[idx] = final_sentence
             idx += 1
@@ -131,6 +137,8 @@ def read_dataset2_files():
                 if "'" in token:
                     token = ps.stem(token)
                 if token in stop_words or token in punctuation:
+                    pass
+                else:
                     final_sentence.append(token)
             pos_result[idx] = final_sentence
             idx += 1
